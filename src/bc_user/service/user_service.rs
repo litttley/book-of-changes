@@ -1,17 +1,17 @@
 use crate::config::init_db::MysqlPool;
-use crate::entity;
-use actix_web::{web, Error, HttpRequest, HttpResponse, HttpServer};
-use diesel::prelude::*;
 
+
+use diesel::prelude::*;
+use crate::bc_user::entity;
 // Run query using Diesel to insert a new database row and return the result.
 pub fn find_user_by_uid(
-    uid: i32,
+    user_id: i32,
     conn: &MysqlPool,
 ) -> Result<Option<entity::user_entity::User>, diesel::result::Error> {
     use crate::schema::user::dsl::*;
 
     let userss = user
-        .filter(userid.eq(userid))
+        .filter(userid.eq(user_id))
         .first::<entity::user_entity::User>(&conn.get().expect(""))
         .optional()?;
 

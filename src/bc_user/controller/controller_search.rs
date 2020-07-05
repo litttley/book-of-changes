@@ -1,9 +1,9 @@
-use actix_web::{get, middleware, web, App, Error, HttpRequest, HttpResponse, HttpServer};
+use actix_web::{get, web, Error,  HttpResponse};
 
 use crate::config::init_db::MysqlPool;
-use crate::service::user_service;
+use crate::bc_user::service::user_service;
 /// Finds bc_user by UID.
-#[get("/bc_user/{user_id}")]
+#[get("/user/{user_id}")]
 pub async fn get_user(
     pool: web::Data<MysqlPool>,
     user_uid: web::Path<i32>,

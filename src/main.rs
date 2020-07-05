@@ -1,21 +1,21 @@
 #[macro_use]
 extern crate diesel;
 extern crate dotenv;
-use actix_web::{get, middleware, web, App, Error, HttpRequest, HttpResponse, HttpServer};
-use diesel::prelude::*;
-use diesel::r2d2::{self, ConnectionManager};
-use dotenv::dotenv;
+use actix_web::{get, middleware, web, App,  HttpRequest, HttpResponse, HttpServer};
+//use diesel::prelude::*;
+//use diesel::r2d2::{self, ConnectionManager};
+//use dotenv::dotenv;
 
 mod config;
-
-mod user::controller;
-mod user::entity;
+mod bc_user;
 mod schema;
-mod user::service;
+use  bc_user::controller::controller_search;
+
+
 
 use crate::config::init_db;
 use crate::config::init_db::MysqlPool;
-use controller::controller_search;
+
 
 //type DbPool = r2d2::Pool<ConnectionManager<MysqlConnection>>;
 
@@ -46,10 +46,10 @@ async fn main() -> std::io::Result<()> {
         .build(manager)
         .expect("Failed to create pool.");*/
 
-    let mysqlPool = init_db::connect();
+    let mysql_pool:MysqlPool = init_db::connect();
     HttpServer::new(move || {
         App::new()
-            .data(mysqlPool.clone())
+            .data(mysql_pool.clone())
             .wrap(middleware::DefaultHeaders::new().header("X-Version", "0.2"))
             .wrap(middleware::Compress::default())
             .wrap(middleware::Logger::default())
