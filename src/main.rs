@@ -7,10 +7,11 @@ use diesel::r2d2::{self, ConnectionManager};
 use dotenv::dotenv;
 
 mod config;
-mod controller;
-mod entity;
+
+mod user::controller;
+mod user::entity;
 mod schema;
-mod service;
+mod user::service;
 
 use crate::config::init_db;
 use crate::config::init_db::MysqlPool;

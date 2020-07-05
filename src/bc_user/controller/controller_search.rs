@@ -2,8 +2,8 @@ use actix_web::{get, middleware, web, App, Error, HttpRequest, HttpResponse, Htt
 
 use crate::config::init_db::MysqlPool;
 use crate::service::user_service;
-/// Finds user by UID.
-#[get("/user/{user_id}")]
+/// Finds bc_user by UID.
+#[get("/bc_user/{user_id}")]
 pub async fn get_user(
     pool: web::Data<MysqlPool>,
     user_uid: web::Path<i32>,
@@ -21,7 +21,7 @@ pub async fn get_user(
     if let Some(user) = user {
         Ok(HttpResponse::Ok().json(user))
     } else {
-        let res = HttpResponse::NotFound().body(format!("No user found with uid: {}", user_uid));
+        let res = HttpResponse::NotFound().body(format!("No bc_user found with uid: {}", user_uid));
         Ok(res)
     }
 }
