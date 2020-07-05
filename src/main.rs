@@ -1,7 +1,7 @@
 #[macro_use]
 extern crate diesel;
 extern crate dotenv;
-use actix_web::{get, middleware, web, App, HttpRequest, HttpResponse, HttpServer};
+use actix_web::{get, middleware, web, App, Error,HttpRequest, HttpResponse, HttpServer};
 use diesel::prelude::*;
 use diesel::r2d2::{self, ConnectionManager};
 use dotenv::dotenv;
@@ -11,13 +11,17 @@ use dotenv::dotenv;
 
 mod controller;
 mod config;
+mod service;
+mod entity;
+mod schema;
+
 use controller::controller_search;
 use crate::config::init_db;
 use crate::config::init_db::{MysqlPool};
 
 
 
-type DbPool = r2d2::Pool<ConnectionManager<MysqlConnection>>;
+//type DbPool = r2d2::Pool<ConnectionManager<MysqlConnection>>;
 
 #[get("/resource1/{name}/index.html")]
 async fn index(req: HttpRequest, name: web::Path<String>) -> String {
@@ -29,6 +33,9 @@ async fn index_async(req: HttpRequest) -> &'static str {
     println!("REQ: {:?}", req);
     "Hello world!\r\n"
 }
+
+
+
 
 #[get("/")]
 async fn no_params() -> &'static str {
@@ -66,7 +73,7 @@ async fn main() -> std::io::Result<()> {
                     .route(web::get().to(index_async)),
             )
             .service(web::resource("/test1.html").to(|| async { "Test\r\n" }))
-           .service(controller_search::no_params)
+           .service(controller_search::get_user)
     })
         .bind("127.0.0.1:8080")?
         .workers(1)
