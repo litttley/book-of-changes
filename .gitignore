@@ -12,3 +12,4 @@ Cargo.lock
 .gitignore
 /.idea/
 /.env
+/migrations/.gitkeep
