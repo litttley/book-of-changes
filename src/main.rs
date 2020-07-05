@@ -1,25 +1,20 @@
 #[macro_use]
 extern crate diesel;
 extern crate dotenv;
-use actix_web::{get, middleware, web, App, Error,HttpRequest, HttpResponse, HttpServer};
+use actix_web::{get, middleware, web, App, Error, HttpRequest, HttpResponse, HttpServer};
 use diesel::prelude::*;
 use diesel::r2d2::{self, ConnectionManager};
 use dotenv::dotenv;
 
-
-
-
-mod controller;
 mod config;
-mod service;
+mod controller;
 mod entity;
 mod schema;
+mod service;
 
-use controller::controller_search;
 use crate::config::init_db;
-use crate::config::init_db::{MysqlPool};
-
-
+use crate::config::init_db::MysqlPool;
+use controller::controller_search;
 
 //type DbPool = r2d2::Pool<ConnectionManager<MysqlConnection>>;
 
@@ -33,9 +28,6 @@ async fn index_async(req: HttpRequest) -> &'static str {
     println!("REQ: {:?}", req);
     "Hello world!\r\n"
 }
-
-
-
 
 #[get("/")]
 async fn no_params() -> &'static str {
@@ -53,7 +45,7 @@ async fn main() -> std::io::Result<()> {
         .build(manager)
         .expect("Failed to create pool.");*/
 
-  let mysqlPool   =  init_db::connect();
+    let mysqlPool = init_db::connect();
     HttpServer::new(move || {
         App::new()
             .data(mysqlPool.clone())
@@ -64,19 +56,15 @@ async fn main() -> std::io::Result<()> {
             .service(no_params)
             .service(
                 web::resource("/resource2/index.html")
-                    .wrap(
-                        middleware::DefaultHeaders::new().header("X-Version-R2", "0.3"),
-                    )
-                    .default_service(
-                        web::route().to(|| HttpResponse::MethodNotAllowed()),
-                    )
+                    .wrap(middleware::DefaultHeaders::new().header("X-Version-R2", "0.3"))
+                    .default_service(web::route().to(|| HttpResponse::MethodNotAllowed()))
                     .route(web::get().to(index_async)),
             )
             .service(web::resource("/test1.html").to(|| async { "Test\r\n" }))
-           .service(controller_search::get_user)
+            .service(controller_search::get_user)
     })
-        .bind("127.0.0.1:8080")?
-        .workers(1)
-        .run()
-        .await
+    .bind("127.0.0.1:8080")?
+    .workers(1)
+    .run()
+    .await
 }

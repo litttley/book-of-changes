@@ -1,7 +1,7 @@
-use diesel::prelude::*;
-use actix_web::{ web,  Error,HttpRequest, HttpResponse, HttpServer};
 use crate::config::init_db::MysqlPool;
 use crate::entity;
+use actix_web::{web, Error, HttpRequest, HttpResponse, HttpServer};
+use diesel::prelude::*;
 
 // Run query using Diesel to insert a new database row and return the result.
 pub fn find_user_by_uid(
