@@ -6,6 +6,8 @@ extern crate nonblock_logger;
 extern crate serde;
 extern crate dotenv;
 use actix_web::{get, middleware, web, App, HttpRequest, HttpResponse, HttpServer};
+use log::info;
+use log4rs;
 //use diesel::prelude::*;
 //use diesel::r2d2::{self, ConnectionManager};
 //use dotenv::dotenv;
@@ -43,8 +45,17 @@ async fn no_params() -> &'static str {
 #[actix_rt::main]
 async fn main() -> std::io::Result<()> {
     std::env::set_var("RUST_LOG", "actix_server=info,actix_web=info");
-    env_logger::init();
+    //env_logger::init();
 
+    log4rs::init_file("log4rs.yaml", Default::default()).unwrap();
+
+    /*log4rs 使用说明
+       error!("Goes to stderr and file");
+        warn!("Goes to stderr and file");
+        info!("Goes to stderr and file");
+        debug!("Goes to file only");
+        trace!("Goes to file only");
+    */
     /*let connspec = std::env::var("DATABASE_URL").expect("DATABASE_URL");
     let manager = ConnectionManager::<MysqlConnection>::new(connspec);
     let pool = r2d2::Pool::builder()

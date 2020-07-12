@@ -34,7 +34,9 @@ pub async fn get_gua_list(
     pool: web::Data<MysqlPool>,
     form: web::Json<gua_list_req::GuaListReq>,
 ) -> Result<HttpResponse, Error> {
-    eprintln!("111222");
+ /*   error!("Goes to stderr and file");
+    warn!("Goes to stderr and file");
+    info!("Goes to stderr and file");*/
     let conn = pool.get().expect("couldn't get db connection from pool");
     let req = form.into_inner();
     // use web::block to offload blocking Diesel code without blocking server thread
@@ -44,6 +46,6 @@ pub async fn get_gua_list(
             eprintln!("{}", e);
             HttpResponse::InternalServerError().finish()
         })?;
-    eprintln!("333333");
-    Ok(HttpResponse::Ok().json(ApiResult::new().with_msg("ok").with_data(result)))
+    info!("33333");
+    Ok(HttpResponse::Ok().json(ApiResult::new().with_msg("success").with_data(result)))
 }

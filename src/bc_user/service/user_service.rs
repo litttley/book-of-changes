@@ -30,29 +30,12 @@ pub fn search_gua_list(
     conn: &MysqlPool,
 ) -> Result<Option<Vec<gua_list_resp::GuaListResp>>, diesel::result::Error> {
     let param = &req.name;
-    println!("{}", param);
+    info!("sql查询参数{:#?}", param);
     let query = sql_query("select gua_code,gua_name from six_four_hexagrams where gua_code=?");
     let results = query
         .bind::<Text, _>(param)
         .get_results::<gua_list_resp::GuaListResp>(&conn.get().expect("sssccc"));
-    println!("{:#?}", results);
+    info!("sql查询参数{:#?}", results);
+    //println!("{:#?}", results);
     Ok(results.ok())
 }
-
-//Using raw sql to get structs not related to any table schema
-/*pub fn query_no_schema(){
-    #[derive(QueryableByName)]
-    struct Entry {
-        #[sql_type = "Integer"]
-        record_type: i32,
-        #[sql_type = "Numeric"]
-        value: f64,
-    }
-
-        let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
-        let connection = PgConnection::establish(&database_url).unwrap();
-
-        let query = "SELECT record_type, sum(price * amount) as value from records";
-        let results = sql_query(query).load::<Entry>(&connection);
-
-}*/
