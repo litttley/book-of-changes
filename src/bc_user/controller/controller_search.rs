@@ -1,8 +1,10 @@
-use actix_web::{get, web, Error,  HttpResponse};
+use actix_web::{get, post, web, Error, HttpResponse};
 
-use crate::config::init_db::MysqlPool;
-use crate::bc_user::service::user_service;
 use crate::bc_user::entity::user_entity;
+use crate::bc_user::req::gua_list_req;
+use crate::bc_user::service::user_service;
+use crate::config::init_db::MysqlPool;
+use crate::utils::ResultMsg::ApiResult;
 /// Finds bc_user by UID.
 #[get("/user/{user_id}")]
 pub async fn get_user(
@@ -25,22 +27,23 @@ pub async fn get_user(
         let res = HttpResponse::NotFound().body(format!("No bc_user found with uid: {}", user_uid));
         Ok(res)
     }
+}
 
-   /* #[post("/user")]
-    async fn add_user(
-        pool: web::Data<DbPool>,
-        form: web::Json<user_entity::NewUser>,
-    ) -> Result<HttpResponse, Error> {
-        let conn = pool.get().expect("couldn't get db connection from pool");
-
-        // use web::block to offload blocking Diesel code without blocking server thread
-        let user = web::block(move || user_service::insert_new_user(&form.name, &conn))
-            .await
-            .map_err(|e| {
-                eprintln!("{}", e);
-                HttpResponse::InternalServerError().finish()
-            })?;
-
-        Ok(HttpResponse::Ok().json(user))
-    }*/
+#[post("/guasearch")]
+pub async fn get_gua_list(
+    pool: web::Data<MysqlPool>,
+    form: web::Json<gua_list_req::GuaListReq>,
+) -> Result<HttpResponse, Error> {
+    eprintln!("111222");
+    let conn = pool.get().expect("couldn't get db connection from pool");
+    let req = form.into_inner();
+    // use web::block to offload blocking Diesel code without blocking server thread
+    let result = web::block(move || user_service::search_gua_list(&req, &pool))
+        .await
+        .map_err(|e| {
+            eprintln!("{}", e);
+            HttpResponse::InternalServerError().finish()
+        })?;
+    eprintln!("333333");
+    Ok(HttpResponse::Ok().json(ApiResult::new().with_msg("ok").with_data(result)))
 }

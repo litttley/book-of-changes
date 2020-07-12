@@ -1,23 +1,26 @@
 #[macro_use]
 extern crate diesel;
+#[macro_use]
+extern crate nonblock_logger;
+#[macro_use]
+extern crate serde;
 extern crate dotenv;
-use actix_web::{get, middleware, web, App,  HttpRequest, HttpResponse, HttpServer};
+use actix_web::{get, middleware, web, App, HttpRequest, HttpResponse, HttpServer};
 //use diesel::prelude::*;
 //use diesel::r2d2::{self, ConnectionManager};
 //use dotenv::dotenv;
 
-mod config;
 mod bc_user;
+mod config;
 mod schema;
-use  bc_user::controller::controller_search;
-
+mod utils;
+use bc_user::controller::controller_search;
+use utils::ResultMsg;
 
 mod test; //单元测试
 
-
 use crate::config::init_db;
 use crate::config::init_db::MysqlPool;
-
 
 //type DbPool = r2d2::Pool<ConnectionManager<MysqlConnection>>;
 
@@ -48,7 +51,7 @@ async fn main() -> std::io::Result<()> {
         .build(manager)
         .expect("Failed to create pool.");*/
 
-    let mysql_pool:MysqlPool = init_db::connect();
+    let mysql_pool: MysqlPool = init_db::connect();
     HttpServer::new(move || {
         App::new()
             .data(mysql_pool.clone())
@@ -65,6 +68,7 @@ async fn main() -> std::io::Result<()> {
             )
             .service(web::resource("/test1.html").to(|| async { "Test\r\n" }))
             .service(controller_search::get_user)
+            .service(controller_search::get_gua_list)
     })
     .bind("127.0.0.1:8080")?
     .workers(1)

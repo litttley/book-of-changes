@@ -1,11 +1,15 @@
 use crate::config::init_db::MysqlPool;
 
-
-use diesel::prelude::*;
-use crate::bc_user::entity;
-use diesel::sql_query;
 use diesel::expression::sql_literal::sql;
+use diesel::prelude::*;
+use diesel::query_builder::SqlQuery;
+use diesel::query_dsl::LoadQuery;
+use diesel::sql_query;
+use diesel::sql_types::{Integer, Text};
 
+use crate::bc_user::entity;
+use crate::bc_user::req::gua_list_req;
+use crate::bc_user::resp::gua_list_resp;
 // Run query using Diesel to insert a new database row and return the result.
 pub fn find_user_by_uid(
     user_id: i32,
@@ -21,27 +25,19 @@ pub fn find_user_by_uid(
     Ok(userss)
 }
 
-// Run query using Diesel to insert a new database row and return the result.
-/*pub fn insert_new_user(
-    // prevent collision with `name` column imported inside the function
-    nm: &str,
+pub fn search_gua_list(
+    req: &gua_list_req::GuaListReq,
     conn: &MysqlPool,
-) -> Result<models::User, diesel::result::Error> {
-    // It is common when using Diesel with Actix web to import schema-related
-    // modules inside a function's scope (rather than the normal module's scope)
-    // to prevent import collisions and namespace pollution.
-    use crate::schema::users::dsl::*;
-
-    let new_user = models::User {
-        id: 2,
-        name: nm.to_owned(),
-    };
-
-    diesel::insert_into(users).values(&new_user).execute(conn)?;
-
-
-    Ok(new_user)
-}*/
+) -> Result<Option<Vec<gua_list_resp::GuaListResp>>, diesel::result::Error> {
+    let param = &req.name;
+    println!("{}", param);
+    let query = sql_query("select gua_code,gua_name from six_four_hexagrams where gua_code=?");
+    let results = query
+        .bind::<Text, _>(param)
+        .get_results::<gua_list_resp::GuaListResp>(&conn.get().expect("sssccc"));
+    println!("{:#?}", results);
+    Ok(results.ok())
+}
 
 //Using raw sql to get structs not related to any table schema
 /*pub fn query_no_schema(){

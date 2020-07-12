@@ -1,7 +1,6 @@
 use diesel::mysql::MysqlConnection;
 use diesel::r2d2::{ConnectionManager, Pool};
 
-
 pub type MysqlPool = Pool<ConnectionManager<MysqlConnection>>;
 //pub type MySqlPooledConnection = PooledConnection<ConnectionManager<MysqlConnection>>;
 

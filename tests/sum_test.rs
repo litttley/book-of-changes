@@ -1,7 +1,3 @@
-
-
 #[test]
 #[ignore]
-fn sum_test() {
-
-}
+fn sum_test() {}
