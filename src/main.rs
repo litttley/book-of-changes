@@ -8,6 +8,7 @@ extern crate dotenv;
 use actix_web::{get, middleware, web, App, HttpRequest, HttpResponse, HttpServer};
 use log::info;
 use log4rs;
+use thiserror;
 //use diesel::prelude::*;
 //use diesel::r2d2::{self, ConnectionManager};
 //use dotenv::dotenv;

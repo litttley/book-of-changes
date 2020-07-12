@@ -27,4 +27,8 @@ mod tests {
         let results = sql_query(query).load::<Entry>(&connection);
         println!("{:#?}", results);
     }
+    #[test]
+    fn test_error(){
+
+    }
 }

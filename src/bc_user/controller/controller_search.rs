@@ -1,10 +1,12 @@
-use actix_web::{get, post, web, Error, HttpResponse};
+use actix_web::{get, post, web, Error, HttpResponse, ResponseError};
 
 use crate::bc_user::entity::user_entity;
 use crate::bc_user::req::gua_list_req;
 use crate::bc_user::service::user_service;
 use crate::config::init_db::MysqlPool;
 use crate::utils::ResultMsg::ApiResult;
+use crate::utils::CustomeError::CustomerError;
+use actix_threadpool::BlockingError;
 /// Finds bc_user by UID.
 #[get("/user/{user_id}")]
 pub async fn get_user(
@@ -43,8 +45,14 @@ pub async fn get_gua_list(
     let result = web::block(move || user_service::search_gua_list(&req, &pool))
         .await
         .map_err(|e| {
-            eprintln!("{}", e);
-            HttpResponse::InternalServerError().finish()
+            println!("{:#?}",e);
+            let mut mes=String::new();
+            if let BlockingError::Error( CustomerError::SqlExecutionError(es))=e{
+                mes.push_str(es.as_str());
+            }
+            HttpResponse::Ok().json(ApiResult::new().with_msg("success").with_data(mes))
+
+            //HttpResponse::InternalServerError().finish()
         })?;
     info!("33333");
     Ok(HttpResponse::Ok().json(ApiResult::new().with_msg("success").with_data(result)))
