@@ -12,6 +12,8 @@ mod schema;
 use  bc_user::controller::controller_search;
 
 
+mod test; //单元测试
+
 
 use crate::config::init_db;
 use crate::config::init_db::MysqlPool;
