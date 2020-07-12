@@ -13,3 +13,4 @@ Cargo.lock
 /.idea/
 /.env
 /migrations/.gitkeep
+/unit_test/target/

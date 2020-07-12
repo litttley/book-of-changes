@@ -7,3 +7,8 @@ pub struct User {
     pub userid: i32,
     pub username: String,
 }
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct NewUser {
+    pub name: String,
+}
