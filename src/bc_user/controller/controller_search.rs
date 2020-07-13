@@ -45,7 +45,7 @@ pub async fn get_gua_list(
     let result = web::block(move || user_service::search_gua_list(&req, &pool))
         .await
         .map_err(|e| {
-            println!("{:#?}",e);
+            eprintln!("{:#?}",e);
             let mut mes=String::new();
             if let BlockingError::Error( CustomerError::SqlExecutionError(es))=e{
                 mes.push_str(es.as_str());

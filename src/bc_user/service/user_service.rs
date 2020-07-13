@@ -35,16 +35,16 @@ pub fn search_gua_list(
 ) -> Result<Vec<GuaListResp>,CustomerError> {
     let param = &req.name;
     info!("sql查询参数{:#?}", param);
-    let query = sql_query("selectgua_code,gua_name from six_four_hexagrams where gua_code=?");
+    let query = sql_query("select gua_code,gua_name from six_four_hexagrams where gua_code=?");
     let results = query
         .bind::<Text, _>(param)
         .get_results::<gua_list_resp::GuaListResp>(&conn.get().expect("数据库连接异常"));
     info!("sql查询参数{:#?}", results);
-
   if let Ok(results)=results{
         Ok(results)
     }else{
-        Err(CustomerError::SqlExecutionError("search_gua_list".parse().unwrap()))
+      let errorMsg = String::from("sql执行异常");
+        Err(CustomerError::SqlExecutionError(errorMsg))
     }
 
     //println!("{:#?}", results);
